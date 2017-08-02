@@ -152,6 +152,16 @@ export function main() {
               ]);
         });
 
+        it('should append the required parent considering top level ng-container', () => {
+          expect(humanizeDom(
+                     parser.parse('<ng-container><tr></tr></ng-container><p></p>', 'TestComp')))
+              .toEqual([
+                [html.Element, 'ng-container', 0],
+                [html.Element, 'tr', 1],
+                [html.Element, 'p', 0],
+              ]);
+        });
+
         it('should special case ng-container when adding a required parent', () => {
           expect(humanizeDom(parser.parse(
                      '<table><thead><ng-container><tr></tr></ng-container></thead></table>',
@@ -361,6 +371,11 @@ export function main() {
           expect(humanizeErrors(p.errors)).toEqual([
             [null, 'Invalid ICU message. Missing \'}\'.', '0:34']
           ]);
+        });
+
+        it('should support ICU expressions with cases that contain numbers', () => {
+          const p = parser.parse(`{sex, select, male {m} female {f} 0 {other}}`, 'TestComp', true);
+          expect(p.errors.length).toEqual(0);
         });
 
         it('should error when expansion case is not closed', () => {

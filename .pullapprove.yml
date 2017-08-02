@@ -69,8 +69,8 @@ groups:
           - "*.lock"
           - "tools/*"
         exclude:
-          - "tools/@angular/tsc-wrapped/*"
           - "tools/public_api_guard/*"
+          - "tools/ngc-wrapped/*"
           - "aio/*"
     users:
       - IgorMinar #primary
@@ -136,8 +136,9 @@ groups:
   compiler-cli:
     conditions:
       files:
-        - "tools/@angular/tsc-wrapped/*"
+        - "packages/tsc-wrapped/*"
         - "packages/compiler-cli/*"
+        - "tools/ngc-wrapped/*"
     users:
       - alexeagle
       - chuckjaz

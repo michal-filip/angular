@@ -25,8 +25,9 @@ export interface CompilerHostContext extends ts.ModuleResolutionHost {
   assumeFileExists(fileName: string): void;
 }
 
+export interface MetadataProvider { getMetadata(source: ts.SourceFile): ModuleMetadata|undefined; }
+
 export class CompilerHost implements AotCompilerHost {
-  protected metadataCollector = new MetadataCollector();
   private isGenDirChildOfRootDir: boolean;
   protected basePath: string;
   private genDir: string;
@@ -39,10 +40,11 @@ export class CompilerHost implements AotCompilerHost {
 
   constructor(
       protected program: ts.Program, protected options: AngularCompilerOptions,
-      protected context: CompilerHostContext, collectorOptions?: CollectorOptions) {
+      protected context: CompilerHostContext, collectorOptions?: CollectorOptions,
+      protected metadataProvider: MetadataProvider = new MetadataCollector()) {
     // normalize the path so that it never ends with '/'.
-    this.basePath = path.normalize(path.join(this.options.basePath, '.')).replace(/\\/g, '/');
-    this.genDir = path.normalize(path.join(this.options.genDir, '.')).replace(/\\/g, '/');
+    this.basePath = path.normalize(path.join(this.options.basePath !, '.')).replace(/\\/g, '/');
+    this.genDir = path.normalize(path.join(this.options.genDir !, '.')).replace(/\\/g, '/');
 
     const genPath: string = path.relative(this.basePath, this.genDir);
     this.isGenDirChildOfRootDir = genPath === '' || !genPath.startsWith('..');
@@ -206,7 +208,7 @@ export class CompilerHost implements AotCompilerHost {
     }
 
     const sf = this.getSourceFile(filePath);
-    const metadata = this.metadataCollector.getMetadata(sf);
+    const metadata = this.metadataProvider.getMetadata(sf);
     return metadata ? [metadata] : [];
   }
 
@@ -245,7 +247,7 @@ export class CompilerHost implements AotCompilerHost {
       v3Metadata.metadata[prop] = v1Metadata.metadata[prop];
     }
 
-    const exports = this.metadataCollector.getMetadata(this.getSourceFile(dtsFilePath));
+    const exports = this.metadataProvider.getMetadata(this.getSourceFile(dtsFilePath));
     if (exports) {
       for (let prop in exports.metadata) {
         if (!v3Metadata.metadata[prop]) {
@@ -312,7 +314,7 @@ export class CompilerHost implements AotCompilerHost {
       relativePath = relativePath.substr(3);
     }
 
-    return path.join(this.options.genDir, relativePath);
+    return path.join(this.options.genDir !, relativePath);
   }
 
   private hasBundleIndex(filePath: string): boolean {

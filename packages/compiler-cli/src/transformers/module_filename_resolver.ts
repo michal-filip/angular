@@ -1,8 +1,15 @@
+/**
+ * @license
+ * Copyright Google Inc. All Rights Reserved.
+ *
+ * Use of this source code is governed by an MIT-style license that can be
+ * found in the LICENSE file at https://angular.io/license
+ */
+
 import * as path from 'path';
 import * as ts from 'typescript';
 
-import {ModuleFilenameResolver} from './api';
-import {CompilerOptions} from './api';
+import {CompilerOptions, ModuleFilenameResolver} from './api';
 
 const EXT = /(\.ts|\.d\.ts|\.js|\.jsx|\.tsx)$/;
 const DTS = /\.d\.ts$/;
@@ -27,8 +34,8 @@ class SingleRootDirModuleFilenameResolver implements ModuleFilenameResolver {
 
   constructor(private host: ModuleFilenameResolutionHost, private options: CompilerOptions) {
     // normalize the path so that it never ends with '/'.
-    this.basePath = path.normalize(path.join(options.basePath, '.')).replace(/\\/g, '/');
-    this.genDir = path.normalize(path.join(options.genDir, '.')).replace(/\\/g, '/');
+    this.basePath = path.normalize(path.join(options.basePath !, '.')).replace(/\\/g, '/');
+    this.genDir = path.normalize(path.join(options.genDir !, '.')).replace(/\\/g, '/');
 
     const genPath: string = path.relative(this.basePath, this.genDir);
     this.isGenDirChildOfRootDir = genPath === '' || !genPath.startsWith('..');
@@ -153,7 +160,7 @@ class MultipleRootDirModuleFilenameResolver implements ModuleFilenameResolver {
 
   constructor(private host: ModuleFilenameResolutionHost, private options: CompilerOptions) {
     // normalize the path so that it never ends with '/'.
-    this.basePath = path.normalize(path.join(options.basePath, '.')).replace(/\\/g, '/');
+    this.basePath = path.normalize(path.join(options.basePath !, '.')).replace(/\\/g, '/');
   }
 
   getNgCanonicalFileName(fileName: string): string {

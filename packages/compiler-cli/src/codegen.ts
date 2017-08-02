@@ -96,12 +96,12 @@ export class CodeGenerator {
       }
     }
     if (!transContent) {
-      missingTranslation = MissingTranslationStrategy.Ignore
+      missingTranslation = MissingTranslationStrategy.Ignore;
     }
     const {compiler: aotCompiler} = compiler.createAotCompiler(ngCompilerHost, {
       translations: transContent,
-      i18nFormat: cliOptions.i18nFormat,
-      locale: cliOptions.locale, missingTranslation,
+      i18nFormat: cliOptions.i18nFormat || undefined,
+      locale: cliOptions.locale || undefined, missingTranslation,
       enableLegacyTemplate: options.enableLegacyTemplate !== false,
       enableSummariesForJit: options.enableSummariesForJit !== false,
     });
